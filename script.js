@@ -1,215 +1,90 @@
-// Mock Database of Pokémon across generations with Taboo lists based on difficulty level
-const pokemonDatabase = [
-    {
-        name: "Pikachu", gen: 1,
-        easy: ["Yellow", "Electric", "Mouse", "Tail"],
-        medium: ["Yellow", "Electric", "Mouse", "Tail", "Thunderbolt", "Cheeks"],
-        hard: ["Yellow", "Electric", "Mouse", "Tail", "Static", "Puka"]
-    },
-    {
-        name: "Charizard", gen: 1,
-        easy: ["Fire", "Flying", "Dragon", "Lizard"],
-        medium: ["Fire", "Flying", "Dragon", "Lizard", "Flame", "Tail"],
-        hard: ["Fire", "Flying", "Dragon", "Lizard", "Blaze", "Seismic Toss"]
-    },
-    {
-        name: "Bulbasaur", gen: 1,
-        easy: ["Grass", "Poison", "Seed", "Green"],
-        medium: ["Grass", "Poison", "Seed", "Green", "Bulb", "Vine Whip"],
-        hard: ["Grass", "Poison", "Seed", "Green", "Overgrow", "Starter"]
-    },
-    {
-        name: "Mewtwo", gen: 1,
-        easy: ["Psychic", "Clone", "Mew", "Legendary"],
-        medium: ["Psychic", "Clone", "Mew", "Legendary", "Lab", "Cave"],
-        hard: ["Psychic", "Clone", "Mew", "Legendary", "Strikes Back", "Spoon"]
-    },
-    {
-        name: "Lugia", gen: 2,
-        easy: ["Psychic", "Flying", "Legendary", "Silver"],
-        medium: ["Psychic", "Flying", "Legendary", "Silver", "Ocean", "Diving"],
-        hard: ["Psychic", "Flying", "Legendary", "Silver", "Aeroblast", "Whirl Islands"]
-    },
-    {
-        name: "Tyranitar", gen: 2,
-        easy: ["Rock", "Dark", "Armor", "Green"],
-        medium: ["Rock", "Dark", "Armor", "Green", "Sandstorm", "Monster"],
-        hard: ["Rock", "Dark", "Armor", "Green", "Pupitar", "Pseudo"]
-    },
-    {
-        name: "Blaziken", gen: 3,
-        easy: ["Fire", "Fighting", "Chicken", "Bird"],
-        medium: ["Fire", "Fighting", "Chicken", "Bird", "Kick", "Torchic"],
-        hard: ["Fire", "Fighting", "Chicken", "Bird", "Speed Boost", "Blaze Kick"]
-    },
-    {
-        name: "Gardevoir", gen: 3,
-        easy: ["Psychic", "Fairy", "Dress", "Green"],
-        medium: ["Psychic", "Fairy", "Dress", "Green", "Embrace", "Gallade"],
-        hard: ["Psychic", "Fairy", "Dress", "Green", "Synchronize", "Black Hole"]
-    },
-    {
-        name: "Lucario", gen: 4,
-        easy: ["Fighting", "Steel", "Aura", "Blue"],
-        medium: ["Fighting", "Steel", "Aura", "Blue", "Jackal", "Riolu"],
-        hard: ["Fighting", "Steel", "Aura", "Blue", "Inner Focus", "Bone Rush"]
-    },
-    {
-        name: "Garchomp", gen: 4,
-        easy: ["Dragon", "Ground", "Shark", "Sand"],
-        medium: ["Dragon", "Ground", "Shark", "Sand", "Fin", "Cynthia"],
-        hard: ["Dragon", "Ground", "Shark", "Sand", "Rough Skin", "Gabite"]
-    },
-    {
-        name: "Zoroark", gen: 5,
-        easy: ["Dark", "Fox", "Illusion", "Disguise"],
-        medium: ["Dark", "Fox", "Illusion", "Disguise", "Zorua", "Hair"],
-        hard: ["Dark", "Fox", "Illusion", "Disguise", "Night Daze", "Copycat"]
-    },
-    {
-        name: "Greninja", gen: 6,
-        easy: ["Water", "Dark", "Frog", "Ninja"],
-        medium: ["Water", "Dark", "Frog", "Ninja", "Tongue", "Scarf"],
-        hard: ["Water", "Dark", "Frog", "Ninja", "Battle Bond", "Water Shuriken"]
-    },
-    {
-        name: "Sylveon", gen: 6,
-        easy: ["Fairy", "Eevee", "Ribbons", "Pink"],
-        medium: ["Fairy", "Eevee", "Ribbons", "Pink", "Evolution", "Flesh"],
-        hard: ["Fairy", "Eevee", "Ribbons", "Pink", "Cute Charm", "Pixilate"]
-    },
-    {
-        name: "Mimikyu", gen: 7,
-        easy: ["Ghost", "Fairy", "Rag", "Pikachu"],
-        medium: ["Ghost", "Fairy", "Rag", "Pikachu", "Disguise", "Cloth"],
-        hard: ["Ghost", "Fairy", "Rag", "Pikachu", "Sun", "Moon"]
-    },
-    {
-        name: "Dragapult", gen: 8,
-        easy: ["Dragon", "Ghost", "Stealth", "Missile"],
-        medium: ["Dragon", "Ghost", "Stealth", "Missile", "Dreepy", "Head"],
-        hard: ["Dragon", "Ghost", "Stealth", "Missile", "Clear Body", "Infiltrator"]
-    },
-    {
-        name: "Tinkaton", gen: 9,
-        easy: ["Fairy", "Steel", "Hammer", "Pink"],
-        medium: ["Fairy", "Steel", "Hammer", "Pink", "Corviknight", "Gigaton"],
-        hard: ["Fairy", "Steel", "Hammer", "Pink", "Mold Breaker", "Own Tempo"]
-    }
-];
+const API="https://pokeapi.co/api/v2";
+const genRanges={1:[1,151],2:[152,251],3:[252,386],4:[387,493],5:[494,649],6:[650,721],7:[722,809],8:[810,905],9:[906,1025]};
+let cache=null,currentPool=[],lastId=null,timer=null,timeLeft=180,active=false,penalty=0;
 
-// App State variables
-let timerInterval = null;
-let tabooPenaltyCount = 0;
-let isTimerActive = false;
+const overrides={
+ pikachu:{easy:["yellow","electric","mouse","thunder"],medium:["yellow","electric","Ash","Thunderbolt","Volt","Pichu"],hard:["mascot","cheeks","rodent","Lightning","Kanto","Raichu"]},
+ charizard:{easy:["fire","dragon","flying","flame"],medium:["Charmeleon","wings","blaze","ember","tail","orange"],hard:["blast","Drake","lizard","inferno","X","Y"]},
+ mewtwo:{easy:["psychic","clone","legendary","Mew"],medium:["lab","genetic","armor","telepathy","clone","cat"],hard:["experiment","DNA","scientist","telekinesis","amnesia","mutation"]},
+ mew:{easy:["psychic","cute","pink","legendary"],medium:["Mewtwo","transform","mythical","DNA","tail","New"],hard:["ancestor","genetic","Ditto","telepathy","origin","clone"]},
+ squirtle:{easy:["water","turtle","blue","shell"],medium:["Wartortle","Blastoise","Bubble","starter","cannon","rain"],hard:["withdraw","shelter","aqua","torrent","reptile","Shell"]},
+ bulbasaur:{easy:["grass","poison","frog","starter"],medium:["Ivy","Venusaur","seed","vine","plant","squirtle"],hard:["overgrow","chlorophyll","leech","flower","toad","herb"]},
+ gengar:{easy:["ghost","poison","purple","haunt"],medium:["Gastly","Haunter","shadow","night","spooky","Mega"],hard:["hypnosis","curse","shadow","Kanto","mischief","substitute"]},
+ eevee:{easy:["evolve","brown","fox","normal"],medium:["Vaporeon","Jolteon","Flareon","evolution","tail","stone"],hard:["adaptability","Sylveon","Umbreon","Espeon","glaceon","friendship"]}
+};
 
-// DOM Elements
-const rulesBtn = document.getElementById("rules-btn");
-const rulesModal = document.getElementById("rules-modal");
-const closeModal = document.querySelector(".close-modal");
-const randomizeBtn = document.getElementById("randomize-btn");
-const timerDisplay = document.getElementById("timer-display");
-const gameOverDisplay = document.getElementById("game-over-display");
-const cardDisplay = document.getElementById("card-display");
-const pokemonName = document.getElementById("pokemon-name");
-const tabooWordsList = document.getElementById("taboo-words-list");
-const endgameResults = document.getElementById("endgame-results");
-const penaltyScore = document.getElementById("penalty-score");
-const startBtn = document.getElementById("start-btn");
-const penaltyBtn = document.getElementById("penalty-btn");
-const generationSelect = document.getElementById("generation-select");
-const difficultySelect = document.getElementById("difficulty-select");
-
-// Rules Modal Logic
-rulesBtn.addEventListener("click", () => { rulesModal.style.display = "flex"; });
-closeModal.addEventListener("click", () => { rulesModal.style.display = "none"; });
-window.addEventListener("click", (e) => { if (e.target === rulesModal) rulesModal.style.display = "none"; });
-
-// Randomize Card Function
-function showRandomPokemon() {
-    const selectedGen = generationSelect.value;
-    const selectedDifficulty = difficultySelect.value;
-    
-    // Filter database
-    let filtered = pokemonDatabase;
-    if (selectedGen !== "all") {
-        filtered = pokemonDatabase.filter(p => p.gen === parseInt(selectedGen));
-    }
-    
-    if (filtered.length === 0) {
-        pokemonName.textContent = "None Found";
-        tabooWordsList.innerHTML = "<li>Add database entries for this filter!</li>";
-        cardDisplay.classList.remove("hidden");
-        return;
-    }
-    
-    const randomPokemon = filtered[Math.floor(Math.random() * filtered.length)];
-    pokemonName.textContent = randomPokemon.name;
-    
-    // Grab list of words based on selected option
-    const words = randomPokemon[selectedDifficulty] || [];
-    tabooWordsList.innerHTML = words.map(word => `<li>${word}</li>`).join("");
-    cardDisplay.classList.remove("hidden");
+function norm(s){return s.toLowerCase().replace(/[^a-z0-9]/g,"")}
+async function getData(){
+ if(cache)return cache;
+ loading.style.display="block";
+ const r=await fetch(API+"/pokemon?limit=1025&offset=0"); const list=(await r.json()).results;
+ cache=list.map((x,i)=>({id:i+1,name:x.name}));
+ loading.style.display="none"; return cache;
 }
-
-// Randomize Action Trigger
-randomizeBtn.addEventListener("click", showRandomPokemon);
-
-// Blue Circle Button Loop (3 Minute Timer Loop)
-startBtn.addEventListener("click", () => {
-    // Reset state parameters
-    clearInterval(timerInterval);
-    tabooPenaltyCount = 0;
-    isTimerActive = true;
-    
-    // UI Visibility Adjustments
-    randomizeBtn.classList.add("hidden");
-    timerDisplay.classList.remove("hidden");
-    gameOverDisplay.classList.add("hidden");
-    endgameResults.classList.add("hidden");
-    penaltyBtn.disabled = false;
-    
-    // Pick first randomized item automatically
-    showRandomPokemon();
-    
-    let timeRemaining = 3 * 60; // 3 Minutes
-    
-    function updateTimerUI() {
-        const minutes = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
-        const seconds = (timeRemaining % 60).toString().padStart(2, '0');
-        timerDisplay.textContent = `${minutes}:${seconds}`;
-    }
-    
-    updateTimerUI();
-    
-    timerInterval = setInterval(() => {
-        timeRemaining--;
-        updateTimerUI();
-        
-        if (timeRemaining <= 0) {
-            clearInterval(timerInterval);
-            isTimerActive = false;
-            
-            // Endgame State Toggles
-            randomizeBtn.classList.remove("hidden");
-            gameOverDisplay.classList.remove("hidden");
-            penaltyBtn.disabled = true;
-            
-            // Render Penalty Total Numbers
-            penaltyScore.textContent = tabooPenaltyCount;
-            endgameResults.classList.remove("hidden");
-        }
-    }, 1000);
-});
-
-// Red Circle Button Loop (Penalty tracking)
-penaltyBtn.addEventListener("click", () => {
-    if (!isTimerActive) return;
-    
-    tabooPenaltyCount += 2;
-    
-    // Trigger visual flash ring animation class
-    penaltyBtn.classList.remove("flash-ring");
-    void penaltyBtn.offsetWidth; // Force DOM element layout recalculation to retrigger keyframe
-    penaltyBtn.classList.add("flash-ring");
-});
+function genericWords(p,details,species,diff){
+ const types=details.types.map(x=>x.type.name);
+ const abilities=details.abilities.map(x=>x.ability.name.replace("-"," "));
+ const moves=details.moves.slice(0,20).map(x=>x.move.name.replace("-"," "));
+ const genus=(species.genera||[]).find(x=>x.language.name==="en")?.genus?.replace(" Pokémon","")||"";
+ const candidates=[...types,...abilities,...moves,genus];
+ const clean=[];
+ for(const w of candidates){
+   const z=w.toLowerCase();
+   if(!z || z===p.name || z.includes(p.name) || z==="generation" || z==="region")continue;
+   if(!clean.includes(w))clean.push(w);
+ }
+ let count=diff==="easy"?4:6;
+ return clean.slice(0,count);
+}
+async function cardFor(p,diff){
+ const [a,b]=await Promise.all([fetch(API+"/pokemon/"+p.id).then(r=>r.json()),fetch(API+"/pokemon-species/"+p.id).then(r=>r.json())]);
+ let words=overrides[norm(p.name)]?.[diff]||genericWords(p,a,b,diff);
+ return {name:p.name.replace(/-/g," "),words};
+}
+function titleCase(s){return s.split(" ").map(x=>x[0].toUpperCase()+x.slice(1)).join(" ")}
+async function randomize(){
+ if(!active && timer===null){/* initial randomization is allowed */}
+ if(!currentPool.length){
+   const g=+generation.value, [lo,hi]=genRanges[g];
+   const all=await getData(); currentPool=all.filter(p=>p.id>=lo&&p.id<=hi);
+ }
+ let p=currentPool[Math.floor(Math.random()*currentPool.length)];
+ if(currentPool.length>1 && p.id===lastId)p=currentPool[Math.floor(Math.random()*currentPool.length)];
+ lastId=p.id;
+ const c=await cardFor(p,difficulty.value);
+ pokemon.textContent=titleCase(c.name); taboo.innerHTML=c.words.map(w=>`<span class="word">${titleCase(w)}</span>`).join("");
+ card.style.display="block"; gameOver.style.display="none";
+}
+function startTimer(){
+ clearInterval(timer); active=true; penalty=0; timeLeft=180; penaltyResult.style.display="none";
+ timer=setInterval(()=>{
+   timeLeft--; updateTimer();
+   if(timeLeft<=0)endGame();
+ },1000);
+ timerEl.style.display="block"; red.style.display="block"; randomizeBtn.textContent="NEXT POKEMON"; currentPool=[]; randomize();
+}
+function updateTimer(){timerEl.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,"0")}`}
+function endGame(){
+ clearInterval(timer); timer=null; active=false; red.style.display="none"; timerEl.style.display="none";
+ randomizeBtn.textContent="RANDOMIZE!"; gameOver.style.display="block";
+ penaltyResult.style.display="block"; penalty.textContent=penalty;
+}
+rulesBtn.onclick=()=>rulesModal.style.display="flex";
+closeRules.onclick=()=>rulesModal.style.display="none";
+rulesModal.onclick=e=>{if(e.target===rulesModal)rulesModal.style.display="none"};
+randomizeBtn.onclick=randomize;
+blue.onclick=startTimer;
+red.onclick=()=>{
+ if(!active)return;
+ penalty+=2; penalty.textContent=penalty;
+ red.classList.remove("flash"); void red.offsetWidth; red.classList.add("flash");
+ setTimeout(()=>red.classList.remove("flash"),180);
+};
+generation.onchange=()=>{currentPool=[];card.style.display="none"};
+difficulty.onchange=()=>{if(lastId){randomize()}};
+const timerEl=document.getElementById("timer"),generation=document.getElementById("generation"),difficulty=document.getElementById("difficulty"),
+randomizeBtn=document.getElementById("randomize"),pokemon=document.getElementById("pokemon"),taboo=document.getElementById("taboo"),
+card=document.getElementById("card"),loading=document.getElementById("loading"),red=document.getElementById("red"),blue=document.getElementById("blue"),
+gameOver=document.getElementById("gameOver"),penaltyResult=document.getElementById("penaltyResult"),rulesBtn=document.getElementById("rulesBtn"),
+rulesModal=document.getElementById("rulesModal"),closeRules=document.getElementById("closeRules"),penaltyEl=document.getElementById("penalty");
+getData().catch(e=>{loading.textContent="Could not load Pokémon data. Check your internet connection.";});
