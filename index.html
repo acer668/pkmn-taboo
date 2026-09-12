@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Taboo Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button id="rules-btn" class="rules-button">RULES</button>
+
+    <!-- Rules Modal -->
+    <div id="rules-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>RULES</h2>
+            <ol>
+                <li>No specifying generation or region. If stated, press the red button in the bottom right.</li>
+                <li>No using taboo words.</li>
+                <li>When a taboo word is used, press the red button in the bottom right.</li>
+                <li>When your turn of the game starts, press the blue button in the bottom right.</li>
+                <li>After the round, each pokemon guessed correctly is 10 points. Subtract the "taboo word penalty" from the total number of points earned from guessing pokemon to get your team's total points.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <h1>Pokémon Taboo</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="generation-select">Generation:</label>
+                <select id="generation-select">
+                    <option value="all">All Generations</option>
+                    <option value="1">Gen 1</option>
+                    <option value="2">Gen 2</option>
+                    <option value="3">Gen 3</option>
+                    <option value="4">Gen 4</option>
+                    <option value="5">Gen 5</option>
+                    <option value="6">Gen 6</option>
+                    <option value="7">Gen 7</option>
+                    <option value="8">Gen 8</option>
+                    <option value="9">Gen 9</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="difficulty-select">Difficulty:</label>
+                <select id="difficulty-select">
+                    <option value="easy">Easy (4 words)</option>
+                    <option value="medium">Medium (6 words)</option>
+                    <option value="hard">Hard (6 words)</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="randomize-btn" class="randomize-button">Randomize!</button>
+
+        <div id="timer-display" class="timer hidden">03:00</div>
+        <div id="game-over-display" class="game-over hidden">GAME OVER!</div>
+
+        <div id="card-display" class="card hidden">
+            <h2 id="pokemon-name">Pokémon Name</h2>
+            <div class="taboo-label">TABOO WORDS</div>
+            <ul id="taboo-words-list"></ul>
+        </div>
+
+        <div id="endgame-results" class="results-panel hidden">
+            <div class="penalty-title">TABOO WORD PENALTY</div>
+            <div id="penalty-score" class="penalty-count">0</div>
+        </div>
+    </div>
+
+    <!-- Bottom Right Controls -->
+    <div class="action-buttons">
+        <button id="penalty-btn" class="circle-btn red-btn" disabled></button>
+        <button id="start-btn" class="circle-btn blue-btn"></button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
