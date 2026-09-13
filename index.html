@@ -2,32 +2,33 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pokémon Taboo</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <button id="rulesBtn">RULES</button>
-<div id="timer">3:00</div>
+<div id="timer" class="hidden">3:00</div>
 
-<div id="app">
+<main id="app">
   <h1>Pokémon Taboo</h1>
-
   <div class="controls">
     <div class="multi-select" id="generationMenu">
       <button id="generationButton" class="controlButton" type="button">All Generations ▾</button>
-      <div id="generationOptions" class="menuPanel" aria-hidden="true">
-        <label><input type="checkbox" value="1" checked> Generation 1</label>
-        <label><input type="checkbox" value="2" checked> Generation 2</label>
-        <label><input type="checkbox" value="3" checked> Generation 3</label>
-        <label><input type="checkbox" value="4" checked> Generation 4</label>
-        <label><input type="checkbox" value="5" checked> Generation 5</label>
-        <label><input type="checkbox" value="6" checked> Generation 6</label>
-        <label><input type="checkbox" value="7" checked> Generation 7</label>
-        <label><input type="checkbox" value="8" checked> Generation 8</label>
-        <label><input type="checkbox" value="9" checked> Generation 9</label>
-        <button id="selectAllGenerations" class="menuAction" type="button">Select all</button>
-        <button id="clearGenerations" class="menuAction" type="button">Clear</button>
+      <div id="generationOptions" class="menuPanel hidden">
+        <div class="menuChecks">
+          <label><input type="checkbox" value="1" checked> Generation 1</label>
+          <label><input type="checkbox" value="2" checked> Generation 2</label>
+          <label><input type="checkbox" value="3" checked> Generation 3</label>
+          <label><input type="checkbox" value="4" checked> Generation 4</label>
+          <label><input type="checkbox" value="5" checked> Generation 5</label>
+          <label><input type="checkbox" value="6" checked> Generation 6</label>
+          <label><input type="checkbox" value="7" checked> Generation 7</label>
+          <label><input type="checkbox" value="8" checked> Generation 8</label>
+          <label><input type="checkbox" value="9" checked> Generation 9</label>
+          
+        </div>
+        <div class="menuActions"><button id="selectAllGenerations" type="button">Select all</button><button id="clearGenerations" type="button">Clear</button></div>
       </div>
     </div>
 
@@ -36,23 +37,24 @@
       <option value="medium">Medium — 6 taboo words</option>
       <option value="hard">Hard — 6 taboo words</option>
     </select>
-
-    <button id="randomize" type="button">RANDOMIZE!</button>
+    <button id="randomize" class="randomize" type="button">RANDOMIZE!</button>
   </div>
 
   <div id="loading">Loading Pokémon data…</div>
-  <div id="card">
+  <section id="card" class="hidden">
+    <div class="dex" id="dexNumber"></div>
     <h2 id="pokemon"></h2>
+    <div class="tabooTitle">TABOO WORDS</div>
     <div id="taboo" class="taboo"></div>
-  </div>
-  <div id="gameOver">GAME OVER!</div>
-  <div id="penaltyResult">taboo word penalty: <span id="penalty">0</span></div>
-</div>
+  </section>
+  <div id="gameOver" class="hidden">GAME OVER!</div>
+  <div id="penaltyResult" class="hidden">taboo word penalty: <span id="penalty">0</span></div>
+</main>
 
-<button id="blue" class="circle" type="button" aria-label="Start timer">▶</button>
-<button id="red" class="circle" type="button" aria-label="Taboo word">!</button>
+<button id="blue" class="circle blue" type="button" aria-label="Start timer">▶</button>
+<button id="red" class="circle red hidden" type="button" aria-label="Taboo word">!</button>
 
-<div id="rulesModal" class="modal" aria-hidden="true">
+<div id="rulesModal" class="modal hidden" aria-hidden="true">
   <div class="modalBox">
     <button class="close" id="closeRules" type="button">X</button>
     <h2>RULES</h2>
@@ -65,7 +67,6 @@
     </ol>
   </div>
 </div>
-
 <script src="script.js"></script>
 </body>
 </html>
