@@ -43,14 +43,20 @@
   <div id="loading">Loading Pokémon data…</div>
   <section id="card" class="hidden">
     <div class="dex" id="dexNumber"></div>
+    <img id="pokemonImage" class="pokemonImage" alt="" loading="eager">
     <h2 id="pokemon"></h2>
     <div class="tabooTitle">TABOO WORDS</div>
     <div id="taboo" class="taboo"></div>
   </section>
   <div id="gameOver" class="hidden">GAME OVER!</div>
-  <div id="penaltyResult" class="hidden">taboo word penalty: <span id="penalty">0</span></div>
+  <div id="roundResults" class="roundResults hidden">
+    <div>pokémon guessed: <span id="correctCount">0</span></div>
+    <div>total points: <span id="totalPoints">0</span></div>
+    <div id="penaltyResult">taboo word penalty: <span id="penalty">0</span></div>
+  </div>
 </main>
 
+<button id="skip" class="skipButton hidden" type="button">SKIP</button>
 <button id="blue" class="circle blue" type="button" aria-label="Start timer">▶</button>
 <button id="red" class="circle red hidden" type="button" aria-label="Taboo word">!</button>
 
