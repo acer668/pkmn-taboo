@@ -47,9 +47,30 @@ function renderCard(){
 function renderTime(){
   $('timer').textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}`;
 }
+function setSetupLocked(locked){
+  $('difficulty').disabled=locked;
+  genButton.disabled=locked;
+  checkboxes.forEach(c=>c.disabled=locked);
+  $('selectAllGenerations').disabled=locked;
+  $('clearGenerations').disabled=locked;
+  genMenu.classList.toggle('locked', locked);
+  if(locked) genOptions.classList.add('hidden');
+}
+
+function setBlueButtonState(isRoundActive){
+  const blue=$('blue');
+  blue.dataset.mode=isRoundActive?'stop':'start';
+  blue.setAttribute('aria-label',isRoundActive?'End round early':'Start timer');
+  blue.innerHTML=isRoundActive
+    ? '<span class="blueIcon blueX" aria-hidden="true"></span>'
+    : '<span class="blueIcon bluePlay" aria-hidden="true"></span>';
+}
+
 function startGame(){
-  if(!data.length)return;
+  if(!data.length || active)return;
   active=true;
+  setBlueButtonState(true);
+  setSetupLocked(true);
   penalty=0;
   correctCount=0;
   $('penalty').textContent='0';
@@ -74,7 +95,10 @@ function startGame(){
   randomize();
 }
 function endGame(){
+  if(!active)return;
   active=false;
+  setBlueButtonState(false);
+  setSetupLocked(false);
   clearInterval(timerId);
   timerId=null;
   $('timer').classList.add('hidden');
@@ -110,20 +134,23 @@ function skipPokemon(){
   randomize();
 }
 
-genButton.addEventListener('click',e=>{e.stopPropagation();genOptions.classList.toggle('hidden');});
+genButton.addEventListener('click',e=>{e.stopPropagation();if(active)return;genOptions.classList.toggle('hidden');});
 genOptions.addEventListener('click',e=>e.stopPropagation());
 document.addEventListener('click',()=>genOptions.classList.add('hidden'));
-checkboxes.forEach(c=>c.addEventListener('change',()=>{updateGenLabel();rebuildPool();if(current)randomize();}));
-$('selectAllGenerations').addEventListener('click',()=>{checkboxes.forEach(c=>c.checked=true);updateGenLabel();rebuildPool();});
-$('clearGenerations').addEventListener('click',()=>{checkboxes.forEach(c=>c.checked=false);updateGenLabel();available=[];$('card').classList.add('hidden');});
-$('difficulty').addEventListener('change',()=>{if(current)renderCard();});
+checkboxes.forEach(c=>c.addEventListener('change',()=>{if(active)return;updateGenLabel();rebuildPool();if(current)randomize();}));
+$('selectAllGenerations').addEventListener('click',()=>{if(active)return;checkboxes.forEach(c=>c.checked=true);updateGenLabel();rebuildPool();});
+$('clearGenerations').addEventListener('click',()=>{if(active)return;checkboxes.forEach(c=>c.checked=false);updateGenLabel();available=[];$('card').classList.add('hidden');});
+$('difficulty').addEventListener('change',()=>{if(active)return;if(current)renderCard();});
 $('randomize').addEventListener('click',nextPokemon);
 $('skip').addEventListener('click',skipPokemon);
-$('blue').addEventListener('click',()=>{if(!active)startGame();});
+$('blue').addEventListener('click',function(){ if(this.dataset.mode==='stop' || active){ endGame(); } else { startGame(); } });
 $('red').addEventListener('click',taboo);
 $('rulesBtn').addEventListener('click',()=>{$('rulesModal').classList.remove('hidden');});
 $('closeRules').addEventListener('click',()=>{$('rulesModal').classList.add('hidden');});
 $('rulesModal').addEventListener('click',e=>{if(e.target===$('rulesModal'))$('rulesModal').classList.add('hidden');});
+
+setBlueButtonState(false);
+setSetupLocked(false);
 
 fetch('pokemon.json')
   .then(r=>{if(!r.ok)throw new Error('pokemon.json could not be loaded');return r.json();})
