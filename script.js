@@ -50,8 +50,6 @@ function renderTime(){
 function startGame(){
   if(!data.length)return;
   active=true;
-  $('blue').textContent='✕';
-  $('blue').setAttribute('aria-label','End round early');
   penalty=0;
   correctCount=0;
   $('penalty').textContent='0';
@@ -77,8 +75,6 @@ function startGame(){
 }
 function endGame(){
   active=false;
-  $('blue').textContent='▶';
-  $('blue').setAttribute('aria-label','Start timer');
   clearInterval(timerId);
   timerId=null;
   $('timer').classList.add('hidden');
@@ -123,7 +119,7 @@ $('clearGenerations').addEventListener('click',()=>{checkboxes.forEach(c=>c.chec
 $('difficulty').addEventListener('change',()=>{if(current)renderCard();});
 $('randomize').addEventListener('click',nextPokemon);
 $('skip').addEventListener('click',skipPokemon);
-$('blue').addEventListener('click',()=>{if(active){endGame();}else{startGame();}});
+$('blue').addEventListener('click',()=>{if(!active)startGame();});
 $('red').addEventListener('click',taboo);
 $('rulesBtn').addEventListener('click',()=>{$('rulesModal').classList.remove('hidden');});
 $('closeRules').addEventListener('click',()=>{$('rulesModal').classList.add('hidden');});
