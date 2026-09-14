@@ -19,3 +19,8 @@ Update:
 - NEXT POKÉMON counts as one correct guess and adds 10 points.
 - SKIP advances without points and adds 2 to the taboo-word penalty.
 - End-of-round results show guessed count, total points, and taboo-word penalty.
+
+PROJECT MIGRATED
+===============
+new link:https://game-site-93b35.web.app/
+this is a fun minigame website
