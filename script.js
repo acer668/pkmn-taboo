@@ -152,10 +152,27 @@ $('rulesModal').addEventListener('click',e=>{if(e.target===$('rulesModal'))$('ru
 setBlueButtonState(false);
 setSetupLocked(false);
 
-fetch('pokemon.json')
+fetch('pokemon.json?v=20260913-3', { cache: 'no-store' })
   .then(r=>{if(!r.ok)throw new Error('pokemon.json could not be loaded');return r.json();})
   .then(obj=>{
     data=obj.pokemon||[];
+
+    // The website must use the JSON word lists exactly as written.
+    // Do not fabricate placeholder clues if a list is incomplete.
+    const badEntries=[];
+    for(const p of data){
+      for(const mode of ['easy','medium','hard']){
+        const list=p[mode];
+        const expected=mode==='easy'?4:6;
+        if(!Array.isArray(list) || list.length!==expected || list.some(w=>/^clue\s+(easy|medium|hard)\s+\d+$/i.test(String(w).trim()))){
+          badEntries.push(`${p.id} ${p.name} (${mode})`);
+        }
+      }
+    }
+    if(badEntries.length){
+      console.error('Invalid taboo lists found in pokemon.json:', badEntries);
+    }
+
     $('loading').classList.add('hidden');
     rebuildPool();
     updateGenLabel();
