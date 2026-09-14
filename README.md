@@ -1,15 +1,18 @@
-Pokémon Taboo
-============
-Files:
-- index.html — page structure
-- style.css — appearance/layout
-- script.js — game logic
-- pokemon.json — editable Pokémon roster + taboo word lists
+Pokemon Taboo
+==============
+This app loads Pokemon data from PokeAPI, so an internet connection is required.
 
-The app is now self-contained and does not use PokeAPI for its roster. To edit a Pokémon, open pokemon.json and change its name, generation, or easy/medium/hard arrays. To remove a Pokémon, delete its object. To add one, add a new object with a unique id.
+Features:
+- Generations 1-9
+- Easy (4), Medium (6), Hard (6) taboo words
+- Random Pokemon selection
+- Rules popup
+- 3-minute timer
+- Red taboo button: +2 penalty
+- Game over state and penalty display
+- Next Pokemon during an active round
 
-Each Pokémon has exactly 4 Easy, 6 Medium, and 6 Hard taboo words. Generation/region terms are intentionally excluded from the generated lists because the game rules already forbid them.
-
+Note: PokeAPI supplies the Pokemon images and supporting data. A decently large set of Pokemon have hand-written taboo lists; the rest use automatically ai generated clues while avoiding generation/region terms.
 
 Update:
 - Displays official Pokémon artwork for the selected Pokémon (internet connection required for images).
