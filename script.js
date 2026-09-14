@@ -129,7 +129,7 @@ function nextPokemon(){
 }
 function skipPokemon(){
   if(!active)return;
-  penalty+=2;
+  penalty+=6;
   $('penalty').textContent=penalty;
   randomize();
 }
